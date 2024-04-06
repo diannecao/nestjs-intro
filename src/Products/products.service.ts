@@ -2,19 +2,19 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import {InjectModel} from '@nestjs/mongoose';
 import {Model} from 'mongoose';
 import { Product } from './product.model'
-import { ProductsModule } from './product.module';
+import { ProductModule } from './product.module';
 
 @Injectable()
 export class ProductsService{
     private products: Product[] = [];
 
-    constructor(@InjectModel('Product') private readonly productsModel: Model<Product>){
+    constructor(@InjectModel('Product') private readonly productModel: Model<Product>){
 
     }
 
     async insertProduct(title: string, desc :string,  price: number){
        // const prodId = Math.random().toString();
-        const newProduct = new this.productsModel({
+        const newProduct = new this.productModel({
             title, 
             description: desc, 
             price,
@@ -25,7 +25,7 @@ export class ProductsService{
     }
     async getProducts(){
         
-        const products = await this.productsModel.find().exec( );
+        const products = await this.productModel.find().exec( );
         //console.log(result);
         return products.map((prod)=> ({
             id: prod.id, 
@@ -66,7 +66,7 @@ export class ProductsService{
          
     }
     async deleteProduct(prodId: string){
-      const result = await this.productsModel.deleteOne({_id: prodId}).exec();
+      const result = await this.productModel.deleteOne({_id: prodId}).exec();
       if(result.deletedCount === 0){
         throw new NotFoundException('Could not find product');  
       }
@@ -75,7 +75,7 @@ export class ProductsService{
         let product;
 
         try{
-            const product = await this.productsModel.findById(id).exec();
+             product = await this.productModel.findById(id).exec();
 
         }catch(error){
             throw new NotFoundException('Could not find product');  
